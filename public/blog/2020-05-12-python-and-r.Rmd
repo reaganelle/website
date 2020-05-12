@@ -17,16 +17,21 @@ Python and R are able to communicate with each other even though they are two di
 ```
 ![](/blog/2020-05-12-python-and-r_files/IMG_0974 2.jpg)
 
+First, you must call reticulate using library(). Then you can create an object (I called mine "randomstring") with some character value.
 ```{r}
 library(reticulate)
-hi <- "hello"
+randomstring <- "This is a picture of"
+
+
 
 ```
 
-
+Using a python code chunk, you can actually use the same variable name and things won't get mixed up! So, I created a string to finish the rest of my sentence.
 ```{python}
-hi = "world"
-print(r.hi, hi)
+randomstring = "my dog, Millie"
 
 ```
-
+Finally, you can print out the output by telling python that you need to use the variable from r and then the variable in python and combine them together to get:
+```{python}
+print(r.randomstring, randomstring)
+```
