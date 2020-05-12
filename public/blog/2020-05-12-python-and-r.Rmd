@@ -14,8 +14,8 @@ Python and R are able to communicate with each other even though they are two di
 
 ```{r}
 
-knitr::include_graphics("/profile.png")
 ```
+![](/blog/2020-05-12-python-and-r_files/IMG_0974 2.jpg)
 
 ```{r}
 library(reticulate)

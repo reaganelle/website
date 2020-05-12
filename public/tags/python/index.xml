@@ -18,7 +18,7 @@
       
       <guid>/blog/python-and-r/</guid>
       <description> Python and R are able to communicate with each other even though they are two different coding languages. You can use reticulate in order to have R and python chunks communicate.
-knitr::include_graphics(&amp;quot;/profile.png&amp;quot;) library(reticulate) hi &amp;lt;- &amp;quot;hello&amp;quot; hi = &amp;quot;world&amp;quot; print(r.hi, hi) ## hello world </description>
+library(reticulate) hi &amp;lt;- &amp;quot;hello&amp;quot; hi = &amp;quot;world&amp;quot; print(r.hi, hi) ## hello world </description>
     </item>
     
   </channel>
