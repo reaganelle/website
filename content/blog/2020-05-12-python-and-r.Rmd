@@ -1,0 +1,32 @@
+---
+title: Python and R
+author: Elle Reagan
+date: '2020-05-12'
+slug: python-and-r
+categories: []
+tags:
+  - python
+  - reticulate
+description: ''
+---
+
+Python and R are able to communicate with each other even though they are two different coding languages. You can use 
+
+```{r ,echo=FALSE}
+![](/blog/2020-05-12-python-and-r_files/profile.png)```
+
+```
+
+```{r}
+library(reticulate)
+hi <- "hello"
+
+```
+
+
+```{python}
+hi = "world"
+print(r.hi, hi)
+
+```
+

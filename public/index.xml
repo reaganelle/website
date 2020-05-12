@@ -12,6 +12,16 @@
     
     
     <item>
+      <title>Python and R</title>
+      <link>/blog/python-and-r/</link>
+      <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/python-and-r/</guid>
+      <description> Python and R are able to communicate with each other even though they are two different coding languages.
+hi &amp;lt;- &amp;quot;hello&amp;quot; hi = &amp;quot;world&amp;quot; print(r.hi, hi) ## hello world </description>
+    </item>
+    
+    <item>
       <title>Projects</title>
       <link>/projects/</link>
       <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
