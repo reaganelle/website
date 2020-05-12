@@ -9,9 +9,16 @@ tags:
   - reticulate
 description: ''
 ---
-Python and R are able to communicate with each other even though they are two different coding languages. 
+
+Python and R are able to communicate with each other even though they are two different coding languages. You can use reticulate in order to have R and python chunks communicate. 
 
 ```{r}
+
+knitr::include_graphics("/profile.png")
+```
+
+```{r}
+library(reticulate)
 hi <- "hello"
 
 ```
@@ -22,3 +29,4 @@ hi = "world"
 print(r.hi, hi)
 
 ```
+
