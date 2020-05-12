@@ -1,0 +1,315 @@
+---
+title: 'Project 1: Exploratory Data Analysis'
+author: "Elle Reagan epr427"
+date: 'March 6, 2020'
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+---
+
+
+
+<ol start="0" style="list-style-type: decimal">
+<li><p>The data sets I am using retain information for the ATP, or Association of Tennis Professionals, in the year 2016. The first data set contains the tournament name, court surface, and the tournament number. The second data set gives the names of the winners and losers of the final match, the rankings of both players during the tournament, and the tournament number. The datasets were joined using the tournament number. I found the data online on a public domain. This data is interesting to me because I enjoy watching and playing tennis.</p></li>
+<li><p>Tidying: Rearranging Wide/Long</p></li>
+</ol>
+<pre class="r"><code>#install.packages(&quot;corrr&quot;)
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(readxl)
+library(ggplot2)
+library(corrr)
+
+
+final &lt;- read_excel(&quot;final.xls&quot;)
+final</code></pre>
+<pre><code>## # A tibble: 66 x 5
+##    Winner           Loser          WRank LRank ATP  
+##    &lt;chr&gt;            &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 Mahut N.         Muller G.      49    44    34   
+##  2 Thiem D.         Tomic B.       15    21    16   
+##  3 Gasquet R.       Schwartzman D. 19    77    60   
+##  4 Kyrgios N.       Isner J.       18    17    48   
+##  5 Bautista R.      Sock J.        25    26    4    
+##  6 Nadal R.         Nishikori K.   5     6     24   
+##  7 Cilic M.         Nishikori K.   12    5     63   
+##  8 Ramos-Vinolas A. Verdasco F.    35    59    40   
+##  9 Murray A.        Dimitrov G.    2     20    57   
+## 10 Raonic M.        Federer R.     14    3     1    
+## # … with 56 more rows</code></pre>
+<pre class="r"><code>type&lt;- read_excel(&quot;type.xlsx&quot;)
+type</code></pre>
+<pre><code>## # A tibble: 66 x 3
+##    ATP   Tournament             Surface
+##    &lt;chr&gt; &lt;chr&gt;                  &lt;chr&gt;  
+##  1 34    Topshelf Open          Grass  
+##  2 16    Abierto Mexicano       Hard   
+##  3 60    European Open          Hard   
+##  4 48    BB&amp;T Atlanta Open      Hard   
+##  5 4     ASB Classic            Hard   
+##  6 24    Open Banco Sabadell    Clay   
+##  7 63    Swiss Indoors          Hard   
+##  8 40    SkiStar Swedish Open   Clay   
+##  9 57    China Open             Hard   
+## 10 1     Brisbane International Hard   
+## # … with 56 more rows</code></pre>
+<pre class="r"><code>untidyfinal&lt;-final%&gt;%pivot_wider(names_from = &quot;ATP&quot;, values_from = &quot;Winner&quot;)
+tidyfinal&lt;- untidyfinal%&gt;%pivot_longer(cols=c(4:69), names_to=&quot;ATP&quot;, values_to=&quot;Winner&quot;)%&gt;%na.omit()
+tidyfinal</code></pre>
+<pre><code>## # A tibble: 66 x 5
+##    Loser          WRank LRank ATP   Winner          
+##    &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;           
+##  1 Muller G.      49    44    34    Mahut N.        
+##  2 Tomic B.       15    21    16    Thiem D.        
+##  3 Schwartzman D. 19    77    60    Gasquet R.      
+##  4 Isner J.       18    17    48    Kyrgios N.      
+##  5 Sock J.        25    26    4     Bautista R.     
+##  6 Nishikori K.   5     6     24    Nadal R.        
+##  7 Nishikori K.   12    5     63    Cilic M.        
+##  8 Verdasco F.    35    59    40    Ramos-Vinolas A.
+##  9 Dimitrov G.    2     20    57    Murray A.       
+## 10 Federer R.     14    3     1     Raonic M.       
+## # … with 56 more rows</code></pre>
+<pre class="r"><code>untidytype&lt;- type%&gt;%pivot_wider(names_from = &quot;ATP&quot;, values_from = &quot;Surface&quot;)
+tidytype&lt;- untidytype%&gt;%pivot_longer(cols= c(2:67), names_to = &quot;ATP&quot;, values_to = &quot;Surface&quot;)%&gt;%na.omit()</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Joining/Merging</li>
+</ol>
+<pre class="r"><code>tennis&lt;- full_join(tidyfinal, tidytype)</code></pre>
+<p>Since my datasets were already tidy, I had to make them untidy by pivoting wider and then pivoting longer. I joined them by using a full join, however I could have used a different join as my datasets had the same number of rows and did not have any missing values. I didn’t drop any cases.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Wrangling: Using dplyr statistics</li>
+</ol>
+<pre class="r"><code>tennis%&gt;%filter(Surface == &quot;Grass&quot;)</code></pre>
+<pre><code>## # A tibble: 7 x 7
+##   Loser           WRank LRank ATP   Winner      Tournament               Surface
+##   &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;                    &lt;chr&gt;  
+## 1 Muller G.       49    44    34    Mahut N.    Topshelf Open            Grass  
+## 2 Zverev A.       192   38    36    Mayer F.    Gerry Weber Open         Grass  
+## 3 Raonic M.       2     7     39    Murray A.   Wimbledon                Grass  
+## 4 Muller G.       38    39    42    Karlovic I. Hall of Fame Championsh… Grass  
+## 5 Cuevas P.       38    25    38    Johnson S.  AEGON Open               Grass  
+## 6 Raonic M.       2     9     37    Murray A.   AEGON Championships      Grass  
+## 7 Kohlschreiber … 7     26    35    Thiem D.    Mercedes Cup             Grass</code></pre>
+<pre class="r"><code>tennis%&gt;%select(Winner, Tournament)</code></pre>
+<pre><code>## # A tibble: 66 x 2
+##    Winner           Tournament            
+##    &lt;chr&gt;            &lt;chr&gt;                 
+##  1 Mahut N.         Topshelf Open         
+##  2 Thiem D.         Abierto Mexicano      
+##  3 Gasquet R.       European Open         
+##  4 Kyrgios N.       BB&amp;T Atlanta Open     
+##  5 Bautista R.      ASB Classic           
+##  6 Nadal R.         Open Banco Sabadell   
+##  7 Cilic M.         Swiss Indoors         
+##  8 Ramos-Vinolas A. SkiStar Swedish Open  
+##  9 Murray A.        China Open            
+## 10 Raonic M.        Brisbane International
+## # … with 56 more rows</code></pre>
+<pre class="r"><code>tennis%&gt;%arrange((Loser))</code></pre>
+<pre><code>## # A tibble: 66 x 7
+##    Loser       WRank LRank ATP   Winner       Tournament                 Surface
+##    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;chr&gt;                      &lt;chr&gt;  
+##  1 Almagro N.  19    72    10    Thiem D.     Argentina Open             Clay   
+##  2 Baghdatis … 4     57    17    Wawrinka S.  Dubai Tennis Championships Hard   
+##  3 Basilashvi… 48    123   44    Lorenzi P.   Generali Open              Clay   
+##  4 Bautista A… 2     19    59    Murray A.    Shanghai Masters           Hard   
+##  5 Bautista A… 49    17    51    Carreno Bus… Winston-Salem Open at Wak… Hard   
+##  6 Bellucci T. 35    58    8     Estrella Bu… Ecuador Open               Clay   
+##  7 Carreno Bu… 71    50    26    Almagro N.   Millenium Estoril Open     Clay   
+##  8 Carreno-Bu… 27    67    18    Cuevas P.    Brasil Open                Clay   
+##  9 Cilic M.    4     11    31    Wawrinka S.  Geneva Open                Clay   
+## 10 Cilic M.    41    12    14    Kyrgios N.   Open 13                    Hard   
+## # … with 56 more rows</code></pre>
+<pre class="r"><code>tennis%&gt;%group_by(Loser)%&gt;%filter(Surface == &quot;Clay&quot;)%&gt;%select(-Winner, -WRank)</code></pre>
+<pre><code>## # A tibble: 22 x 5
+## # Groups:   Loser [21]
+##    Loser            LRank ATP   Tournament                          Surface
+##    &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                               &lt;chr&gt;  
+##  1 Nishikori K.     6     24    Open Banco Sabadell                 Clay   
+##  2 Verdasco F.      59    40    SkiStar Swedish Open                Clay   
+##  3 Pouille L.       72    25    BRD Nastase Tiriac Trophy           Clay   
+##  4 Almagro N.       72    10    Argentina Open                      Clay   
+##  5 Carreno Busta P. 50    26    Millenium Estoril Open              Clay   
+##  6 Cilic M.         11    31    Geneva Open                         Clay   
+##  7 Haase R.         95    43    Suisse Open Gstaad                  Clay   
+##  8 Cuevas P.        24    41    German Tennis Championships         Clay   
+##  9 Sock J.          25    21    U.S. Men&#39;s Clay Court Championships Clay   
+## 10 Dimitrov G.      29    27    Istanbul Open                       Clay   
+## # … with 12 more rows</code></pre>
+<pre class="r"><code>tennis%&gt;%summarize(n_distinct(Surface))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `n_distinct(Surface)`
+##                   &lt;int&gt;
+## 1                     3</code></pre>
+<pre class="r"><code>tennis$WRank &lt;- as.numeric(as.character(tennis$WRank))
+tennis$LRank &lt;- as.numeric(as.character(tennis$LRank))
+tennis$ATP&lt;- as.numeric(as.character(tennis$ATP))
+tennis&lt;- tennis%&gt;%mutate(dif = abs(WRank-LRank))%&gt;%glimpse</code></pre>
+<pre><code>## Observations: 66
+## Variables: 8
+## $ Loser      &lt;chr&gt; &quot;Muller G.&quot;, &quot;Tomic B.&quot;, &quot;Schwartzman D.&quot;, &quot;Isner J.&quot;, &quot;So…
+## $ WRank      &lt;dbl&gt; 49, 15, 19, 18, 25, 5, 12, 35, 2, 14, 86, 19, 101, 4, 14, …
+## $ LRank      &lt;dbl&gt; 44, 21, 77, 17, 26, 6, 5, 59, 20, 3, 72, 72, 31, 44, 2, 89…
+## $ ATP        &lt;dbl&gt; 34, 16, 60, 48, 4, 24, 63, 40, 57, 1, 25, 10, 55, 2, 50, 1…
+## $ Winner     &lt;chr&gt; &quot;Mahut N.&quot;, &quot;Thiem D.&quot;, &quot;Gasquet R.&quot;, &quot;Kyrgios N.&quot;, &quot;Bauti…
+## $ Tournament &lt;chr&gt; &quot;Topshelf Open&quot;, &quot;Abierto Mexicano&quot;, &quot;European Open&quot;, &quot;BB&amp;…
+## $ Surface    &lt;chr&gt; &quot;Grass&quot;, &quot;Hard&quot;, &quot;Hard&quot;, &quot;Hard&quot;, &quot;Hard&quot;, &quot;Clay&quot;, &quot;Hard&quot;, &quot;…
+## $ dif        &lt;dbl&gt; 5, 6, 58, 1, 1, 1, 7, 24, 18, 11, 14, 53, 70, 40, 12, 28, …</code></pre>
+<pre class="r"><code>tennis%&gt;%summarize(median(WRank))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(WRank)`
+##             &lt;dbl&gt;
+## 1              18</code></pre>
+<pre class="r"><code>tennis%&gt;%summary()</code></pre>
+<pre><code>##     Loser               WRank            LRank             ATP       
+##  Length:66          Min.   :  1.00   Min.   :  1.00   Min.   : 1.00  
+##  Class :character   1st Qu.:  4.00   1st Qu.: 10.25   1st Qu.:17.25  
+##  Mode  :character   Median : 18.00   Median : 23.50   Median :33.50  
+##                     Mean   : 27.98   Mean   : 33.39   Mean   :33.50  
+##                     3rd Qu.: 38.75   3rd Qu.: 48.00   3rd Qu.:49.75  
+##                     Max.   :192.00   Max.   :145.00   Max.   :66.00  
+##     Winner           Tournament          Surface               dif        
+##  Length:66          Length:66          Length:66          Min.   :  1.00  
+##  Class :character   Class :character   Class :character   1st Qu.:  5.25  
+##  Mode  :character   Mode  :character   Mode  :character   Median : 13.50  
+##                                                           Mean   : 26.41  
+##                                                           3rd Qu.: 31.25  
+##                                                           Max.   :154.00</code></pre>
+<p>I used the filter function to search for the results that are only true when the Surface of the court is Grass. I used the select function to only look at Winners and the tournament name. The arrange function was used to arrange the data by the Loser name. I grouped by Loser and filtered for Surface that was Clay and dropped the Winner name and Winner Rank to focus on the loser stats. I used the summarize function to lok at how many distinct Surfaces there were. I changed my ATP, LRank, and WRank variables to numeric and then was able to create a new variable using mutate to look at the differences in rank between loser and winner. I used summarize to look at the median rank of the winners.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Wrangling: Using ten summary statistics</li>
+</ol>
+<pre class="r"><code>tennis%&gt;%group_by(Loser, Surface)%&gt;%summarize_if(is.numeric, mean)</code></pre>
+<pre><code>## # A tibble: 55 x 6
+## # Groups:   Loser [43]
+##    Loser            Surface WRank LRank   ATP   dif
+##    &lt;chr&gt;            &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Almagro N.       Clay     19      72    10  53  
+##  2 Baghdatis M.     Hard      4      57    17  53  
+##  3 Basilashvili N.  Clay     48     123    44  75  
+##  4 Bautista Agut R. Hard     25.5    18    55  24.5
+##  5 Bellucci T.      Clay     35      58     8  23  
+##  6 Carreno Busta P. Clay     71      50    26  21  
+##  7 Carreno-Busta P. Clay     27      67    18  40  
+##  8 Cilic M.         Clay      4      11    31   7  
+##  9 Cilic M.         Hard     41      12    14  29  
+## 10 Coric B.         Clay     47      48    22   1  
+## # … with 45 more rows</code></pre>
+<pre class="r"><code>tennis%&gt;%summarize(mean(LRank), mean(WRank))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   `mean(LRank)` `mean(WRank)`
+##           &lt;dbl&gt;         &lt;dbl&gt;
+## 1          33.4          28.0</code></pre>
+<pre class="r"><code>tennis%&gt;%summarize(sd(WRank), sd(LRank))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   `sd(WRank)` `sd(LRank)`
+##         &lt;dbl&gt;       &lt;dbl&gt;
+## 1        34.7        32.7</code></pre>
+<pre class="r"><code>tennis%&gt;%summarize(max(WRank), max(LRank))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   `max(WRank)` `max(LRank)`
+##          &lt;dbl&gt;        &lt;dbl&gt;
+## 1          192          145</code></pre>
+<pre class="r"><code>tennis%&gt;%summarize(min(WRank), min(LRank))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   `min(WRank)` `min(LRank)`
+##          &lt;dbl&gt;        &lt;dbl&gt;
+## 1            1            1</code></pre>
+<pre class="r"><code>tennis%&gt;%summarize(n_distinct(Winner), n_distinct(Loser))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   `n_distinct(Winner)` `n_distinct(Loser)`
+##                  &lt;int&gt;               &lt;int&gt;
+## 1                   37                  43</code></pre>
+<pre class="r"><code>tennis%&gt;%
+  select(2, 3, 4, 8)%&gt;%correlate()</code></pre>
+<pre><code>## # A tibble: 4 x 5
+##   rowname   WRank  LRank     ATP     dif
+##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 WRank   NA       0.222 -0.0231  0.596 
+## 2 LRank    0.222  NA     -0.176   0.632 
+## 3 ATP     -0.0231 -0.176 NA      -0.0854
+## 4 dif      0.596   0.632 -0.0854 NA</code></pre>
+<p>I grouped by Loser and Surface type and summarized the numeric variables to find the mean of each loser. I then used the summarize function to look at the overall mean of the winner and loser rank. I also used the summarize function to look at the standard deviation, minimum, and maximum of the ranks for winners and losers. I then took a look at the number of distinct winners and losers in the dataset. Finally, I found a correlation matrix of the numeric variables, including the new one I created earlier.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Visualization: Heat map</li>
+</ol>
+<pre class="r"><code>tennis%&gt;%select_if(is.numeric)%&gt;%cor%&gt;%as.data.frame%&gt;%
+rownames_to_column%&gt;%pivot_longer(-1)%&gt;%
+ggplot(aes(rowname,name,fill=value))+geom_tile()+
+geom_text(aes(label=round(value,2)))+
+xlab(&quot;&quot;)+ylab(&quot;&quot;)+scale_fill_gradient2(high=&quot;pink&quot;)  </code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ol start="4" style="list-style-type: decimal">
+<li>Visualization: Scatterplot</li>
+</ol>
+<pre class="r"><code>ggplot(tennis, aes(x=WRank, y=LRank)) + 
+  geom_point(aes(col=Surface)) + 
+  geom_smooth(method=&quot;lm&quot;, se=F)+
+  labs(title = &quot;Winner Rank VS Loser Rank&quot;,
+       x = &quot;Winner Rank&quot;,
+       y = &quot;Loser Rank&quot;)+scale_y_continuous(breaks = seq(0,150,25))+
+  scale_x_continuous(breaks = seq(0,200,25))+
+  scale_color_manual(values=c(&quot;red&quot;, &quot;green&quot;, &quot;purple&quot;))</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" />
+It is apparent that when a scatterplot is made of the two variables Winner Rank (WRank) and Lose Rank (LRank), there is a positive correlation between the two. We can see that most of the winners were ranked below 50, meaning they were higher ranked or better players so to speak. The Losers have a larger distribution with far more points in the 75 - 100 range. A line of best fit is included to show this slightly positive correlation, meaning that as winne rank increases the loser rank is also increased.The colors denote the surface type for the players. It is easy to see that the hard court surface is the most common surface type.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Visualization: Barplot</li>
+</ol>
+<pre class="r"><code>toptennis&lt;- tennis%&gt;%filter(WRank &lt; 10)
+  
+  ggplot(toptennis, aes(Winner))+
+  geom_bar(aes(y=WRank), stat=&quot;summary&quot;, fill = &quot;#FF6666&quot;)+ 
+    theme(axis.text.x = element_text(angle=45, hjust=1), 
+        legend.position=&quot;right&quot;)+facet_wrap(~Surface)+
+    labs(title = &quot;Winners Ranked in the Top 10 and Court Surface&quot;,
+         x = &quot;Winner Name&quot;,
+         y = &quot;Rank&quot;)+
+    scale_y_continuous(breaks = seq(0, 10, 1))</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" />
+This is a barplot of the winners ranked within the top ten, what their rank is and what surfaces they have won on. We can see that the plyer Nadal only won on the clay surface while Murray won on all three surfaces. Data like this can show which players are most versatile when it comes to court surface. Even though Djokovic was ranked as number 1, this player did not win on the Grass surface, whereas Thiem and Murray were able to.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Dimensionality Reduction</li>
+</ol>
+<pre class="r"><code>library(cluster)
+Nclust_dat&lt;- tennis%&gt;%select(ATP, LRank, WRank, dif)
+
+sil_width&lt;-vector()
+for(i in 2:10){
+pam_fit &lt;- pam(Nclust_dat, k = i)
+sil_width[i] &lt;- pam_fit$silinfo$avg.width
+}
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name=&quot;k&quot;,breaks=1:10)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam2&lt;- tennis%&gt;%select(ATP, LRank, WRank, dif)%&gt;%pam(2)
+pam2</code></pre>
+<pre><code>## Medoids:
+##      ID ATP LRank WRank dif
+## [1,] 54  18    67    27  40
+## [2,] 20  31    11     4   7
+## Clustering vector:
+##  [1] 1 2 1 2 2 2 2 1 2 2 1 1 1 1 2 1 2 1 1 2 1 1 2 1 2 1 1 2 2 2 2 2 2 1 2 1 2 2
+## [39] 2 2 1 1 2 2 2 2 1 2 2 2 1 1 2 1 2 2 2 2 1 2 2 2 1 2 2 2
+## Objective function:
+##    build     swap 
+## 42.01406 39.97187 
+## 
+## Available components:
+##  [1] &quot;medoids&quot;    &quot;id.med&quot;     &quot;clustering&quot; &quot;objective&quot;  &quot;isolation&quot; 
+##  [6] &quot;clusinfo&quot;   &quot;silinfo&quot;    &quot;diss&quot;       &quot;call&quot;       &quot;data&quot;</code></pre>
+<pre class="r"><code>final&lt;-tennis%&gt;%mutate(cluster=as.factor(pam2$clustering))
+ggplot(final, aes(x=ATP,y=LRank, color=cluster))+geom_point()+scale_x_continuous(breaks = seq(0, 70, 5))+labs(title = &quot;PAM&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>final %&gt;% group_by(cluster) %&gt;% summarize_if(is.numeric,mean,na.rm=T)</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   cluster WRank LRank   ATP   dif
+##   &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 1        50.8  65.3  29.4  53.3
+## 2 2        14.1  14.0  36.0  10</code></pre>
+<p>First, I created an object that only selected the three numeric variables I wanted to use. Secondly, it was important to find the sillouette width to see how many clusters was preferred. When this was done it was found that two clusters was the optimal number. Then I created another object that had those variables and piped into the pam() function to do PAM analysis on the three numeric variables ATP, LRank, and WRank. The X-axis is ATP and the Y is the Loser Rank with the groupings by cluster. Running the mean for the clusters show that the mean winner rank, loser rank, and difference between the two were all higher than cluster 2. Cluster 2 had the highest ATP ranking however. It appears that the cluster was really separated into high and low player ranking.</p>

@@ -1,0 +1,356 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+Elle Reagan, epr427
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,fig.align="center",warning=FALSE,message=FALSE,fig.width=8, fig.height=5, linewidth=60)
+options(tibble.width = 100,width = 100)
+library(tidyverse)
+```
+
+```{r}
+#install.packages("mlbench")
+#install.packages("lmtest")
+library(readxl)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(lmtest)
+#install.packages("sandwich")
+library(sandwich)
+#install.packages("vegan")
+library(vegan)
+#install.packages("readxl")
+
+ Book4 <- read_excel("content/cereal.xlsx", skip = 1)
+cer<- cereal
+
+cer1<- cer%>%select(-name)
+cer1$mfr<-ifelse(cer$mfr== "K", "K","N")
+head(cer1)
+cer$mfr<- ifelse(cer$mfr== "K", 1,0)
+
+
+cer$shelf <- as.factor(cer$shelf)
+cer$mfr<- as.factor(cer$mfr)
+
+
+class_diag <- function(probs,truth){
+#CONFUSION MATRIX: CALCULATE ACCURACY, TPR, TNR, PPV
+tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+#CALCULATE EXACT AUC
+ord<-order(probs, decreasing=TRUE)
+probs <- probs[ord]; truth <- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+n <- length(TPR)
+auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,auc)
+}
+```
+
+```{r}
+#Question 0.
+
+#My datset is a collection of cereals with their name, whether or not they were manufactured by Kellog's, calories per serving, sodium in mg, what shelf they are placed on, and overall rating. I got this dataset from Kaggle. In total, there are 77 observations. 
+```
+
+
+```{r}
+#Question 1.
+
+#MANOVA
+man1<-manova(cbind(rating,sodium, calories )~shelf, data=cer)
+
+summary(man1)
+#we see that the pvalue is less than .05 and so we reject the null hypothesis and continue on to univariate ANOVA
+
+#univariate ANOVA
+summary.aov(man1)
+#we see that for rating and sodium the shelf position differs whereas calories do not
+
+diffmeans<- cer%>%group_by(shelf)%>%summarize(mean(rating),mean(sodium))
+diffmeans
+#we see the difference in means in both groups
+
+pairwise.t.test(cer$sodium,cer$shelf,
+                p.adj="none")
+#we see that the middle and bottom and top and bottom are significant 
+pairwise.t.test(cer$rating,cer$shelf,
+                p.adj="none")
+#we see that the top and middle are significant
+
+#number of tests: one manova, 3 anova and 6 t tests
+.05/10
+#bonferonni is .005
+#after bonferonni the bottom and middle and top and middle are significant for sugars but rating is no longer significant
+
+#type one error
+1-(.95^10)
+#type 1 error is .4012631
+
+
+
+```
+I think that this data has passed assumptions for random samples and independent observations. The data does not pass for multivariate normality of DV's since each group does not have greater than 25 counts. Based on this, it would be difficult for the data to pass other assumptions because the dataset is very small.
+```{r}
+#Question 2.
+
+dists<-cer%>%select(sodium, calories)%>%dist()
+adonis(dists~shelf,data=cer)
+
+SST<- sum(dists^2)/77
+SSW<-cer%>%group_by(shelf)%>%select(sodium,calories)%>%
+do(d=dist(.[1:2],"euclidean"))%>%ungroup()%>%
+summarize(sum(d[[1]]^2)/20 + sum(d[[2]]^2)/21+ sum(d[[3]]^2)/36)%>%pull
+
+F_obs<-((SST-SSW)/2)/(SSW/74) 
+
+Fs<-replicate(1000,{
+new<-cer%>%mutate(shelf=sample(shelf)) #permute the species vector
+SSW<-new%>%group_by(shelf)%>%select(sodium,calories)%>%
+do(d=dist(.[1:2],"euclidean"))%>%ungroup()%>%
+summarize(sum(d[[1]]^2)/20 + sum(d[[2]]^2)/21+ sum(d[[3]]^2)/36)%>%pull
+((SST-SSW)/2)/(SSW/74) #calculate new F on randomized data
+})
+{hist(Fs,prob = T); abline(v=F_obs, col="red", add=T)}
+mean(Fs>F_obs)
+
+```
+Null hypothesis is there is no difference in the mean distance or spread between groups. The alternative hypothesis is that there is a difference in mean distance or spread between groups.The pvalue is very large and so we would fail to reject the null hypothesis. 
+
+```{r}
+#Question 3.
+rating_c <- cer$rating - mean(cer$rating)
+sugars_c <- cer$sugars - mean(cer$sugars)
+calories_c<- cer$calories - mean(cer$calories)
+sodium_c<- cer$sodium - mean(cer$sodium)
+
+
+#linear regresssion
+fit<- lm(rating~calories_c*shelf, data = cer)
+summary(fit)
+
+#linear regression plot
+qplot(x = calories, y = rating, color = shelf, data = cer) +
+stat_smooth(method = "lm", se = FALSE, fullrange = TRUE)
+
+#checking assumptions
+resids<-fit$residuals; fitvals<-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, col="red") #checks for linearity and homoskedacity
+
+
+ggplot()+geom_histogram(aes(resids),bins=20) #normality
+ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids), color='red') #normality
+
+#regression results
+coeftest(fit, vcov. = vcovHC(fit))
+```
+> - Intercept: Predicted rating for a cereal with calories kept constant controlling for shelf placement is 41.17 points.
+> - ShelfMiddle: Controlling for calories, rating for the middle shelf group is 2.57 points lower than the bottom shelf on average.
+> - ShelfTop: Controlling for calories, rating for the top shelf group is 4.4 points higher than the bottom shelf on average.
+> - calories_c: There is a decrease of -1.13 rating points for every one unit increase in sugar on average.
+> - shelfMiddle:calories_c: The slope for calories on rating is .239 times lower for the middle shelf compared to the bottom shelf.
+> - shelfTop:calories_c: The slope for calories on rating is .737 times higher for the top shelf compared to the bottom shelf.
+
+> - The original standard errors were 2.78 and 2.46 for the middle and top shelves while the interaction and rating were all around .2. The significant p values were for calories and top shelf. The robust standard errors increased for the middle shelf and slightly decreased for the top shelf but the interaction between top shelf and calories was now significant.
+
+> - Based on the adjusted r-squared value of the original model, we can estimate that rating and shelf level can explain about 65% of the variance in sugar per serving of cereal.
+
+```{r}
+#Question 4
+#bootstrap SE
+
+samp_distn<-replicate(5000, {
+boot_dat <- sample_frac(cer, replace=T) #bootstrap your data
+fit <- lm(rating~calories_c*shelf, data=boot_dat) #fit model
+coef(fit) #save coefs
+})
+## Estimated SEs
+samp_distn %>% t %>% as.data.frame %>% summarize_all(sd)
+
+
+```
+
+After running bootstrap errors, the middle and top shelf increased in value compared to the original as well as the robust errors. The calories st. error got smaller. The interaction between calories and middle shelf and top shelf decreased but only slightly. Since the SEs for shelves got bigger, we can assume that the p values also got bigger for those variables.
+
+```{r}
+#Question 5
+head(cer)
+fit3<- glm(mfr~sodium+rating, data = cer, family=binomial(link="logit"))
+coeftest(fit3)
+exp(coef(fit3))
+prob<- predict(fit3, type = "response")
+
+#confusion matrix
+table(predict=as.numeric(prob>.5),truth=cer$mfr)%>%addmargins
+
+#accuracy
+(54+1)/77
+
+#sensitivity
+(1/23)
+
+#specificity
+54/54
+
+#ppv
+1/1
+
+#plot densit of log odds
+odds<-function(p)p/(1-p)
+p<-seq(0,1,by=.1)
+cbind(p, odds=odds(p))%>%round(4)
+
+logit<-function(p)log(odds(p))
+cbind(p, odds=odds(p),logit=logit(p))%>%round(4)
+ggplot()+stat_function(aes(p),fun=logit,geom="line")+ylab("g(p)=logit(p)")+xlab("p")
+
+```
+> - Intercept: odds of manufacterer being Kellogs when sodium and rating are held constant is .083.
+> - sodium: controlling for rating, for every one mg increase in sodium, odds of the manufacterer being Kellogs increase by a factor of 1.0046
+> - rating: controlling for sodium, for every one unit increase in rating, odds of the manufacterer being Kellogs increase by a factor of 1.0207
+
+```{r}
+# ROC curve
+#install.packages("plotROC")
+library(plotROC)
+
+cer1$mfr<- as.factor(cer1$mfr)
+
+ROCplot<-ggplot(cer1)+geom_roc(aes(d=mfr,m=prob), n.cuts=0)+
+geom_segment(aes(x=0,xend=1,y=0,yend=1),lty=2)
+ROCplot
+
+#AUC
+calc_auc(ROCplot)
+
+#needed for function
+class_diag<-function(probs,truth){
+  
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+```
+
+```{r}
+#Question 5 continued
+
+set.seed(1234)
+k=10 #choose number of folds
+data<-cer[sample(nrow(cer)),] #randomly order rows
+folds<-cut(seq(1:nrow(cer)),breaks=k,labels=F) #create folds
+diags<-NULL
+for(i in 1:k){
+## Create training and test sets
+train<-data[folds!=i,]
+test<-data[folds==i,]
+truth<-test$mfr ## Truth labels for fold i
+## Train model on training set (all but fold i)
+fit<-glm(mfr~rating+sodium,data=train,family="binomial")
+## Test model on test set (fold i)
+probs<-predict(fit,newdata = test,type="response")
+## Get diagnostics for fold i
+diags<-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)
+```
+> - The AUC is .45 which would fall below the Bad category.
+> - The out of sample performance for accuracy is .69, the specificity is .98, and the AUC is .45.
+
+
+```{r}
+#Question 6
+
+#LASSO
+#install.packages("glmnet")
+library(glmnet)
+#install.packages("plyr")
+library(dplyr)
+
+y<-as.matrix(cer1$mfr) #grab response
+x<-model.matrix(mfr~.,data=cer1)[,-1] #grab predictors
+head(x)
+
+
+cv<-cv.glmnet(x,y, family = "binomial")
+lasso<-glmnet(x,y,family = "binomial", lambda=cv$lambda.1se)
+coef(lasso)
+```
+
+```{r}
+
+
+set.seed(1234)
+k=10 #choose number of folds
+
+data<-cer[sample(nrow(cer)),] #randomly order rows
+folds<-cut(seq(1:nrow(cer)),breaks=k,labels=F) #create folds
+
+diags<-NULL
+for(i in 1:k){
+  ## Create training and test sets
+  train<-data[folds!=i,] 
+  test<-data[folds==i,]
+  
+  truth<-test$mfr ## Truth labels for fold i
+  
+  ## Train model on training set (all but fold i)
+  fit<-glm(mfr~sodium,data=train,family="binomial")
+  
+  ## Test model on test set (fold i) 
+  probs<-predict(fit,newdata = test,type="response")
+  
+  ## Get diagnostics for fold i
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+
+
+summarize_all(diags,mean)
+
+
+```
+The only variable that was retained was the sodium variable. The AUC for question 5 was .45 and the out of sample performance was better as the AUC was .48 and the accuracy went from from .69 to .701. Since these values are higher, we do not assume overfitting.
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

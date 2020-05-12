@@ -1,0 +1,4 @@
+"0"," Book4 <- read_excel(""content/cereal.xlsx"", skip = 1)
+"
+"2","Error: `path` does not exist: ‘content/cereal.xlsx’
+"

@@ -1,0 +1,16 @@
+"0"," Book4 <- read_excel(""cereal.xlsx"", skip = 1)
+"
+"2","Warning messages:
+"
+"2","1: "
+"2","In bookdown:::check_special_chars(files) :"
+"2","
+ "
+"2"," The filename ""content/Project2 (2).Rmd"" contains special characters. You may rename it to, e.g., ""content/Project2--2-.Rmd"".
+"
+"2","2: "
+"2","In bookdown:::check_special_chars(files) :"
+"2","
+ "
+"2"," The filename ""content/project2 (2).Rmd"" contains special characters. You may rename it to, e.g., ""content/project2--2-.Rmd"".
+"

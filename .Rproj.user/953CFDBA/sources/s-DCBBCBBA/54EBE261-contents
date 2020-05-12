@@ -1,0 +1,152 @@
+---
+title: 'Project 1: Exploratory Data Analysis'
+author: "Elle Reagan epr427"
+date: 'March 6, 2020'
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+0. The data sets I am using retain information for the ATP, or Association of Tennis Professionals, in the year 2016. The first data set contains the tournament name, court surface, and the tournament number. The second data set gives the names of the winners and losers of the final match, the rankings of both players during the tournament, and the tournament number. The datasets were joined using the tournament number. I found the data online on a public domain. This data is interesting to me because I enjoy watching and playing tennis.
+
+2. Tidying: Rearranging Wide/Long
+```{r}
+#install.packages("corrr")
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(readxl)
+library(ggplot2)
+library(corrr)
+
+
+final <- read_excel("final.xls")
+final
+type<- read_excel("type.xlsx")
+type
+
+
+untidyfinal<-final%>%pivot_wider(names_from = "ATP", values_from = "Winner")
+tidyfinal<- untidyfinal%>%pivot_longer(cols=c(4:69), names_to="ATP", values_to="Winner")%>%na.omit()
+tidyfinal
+
+untidytype<- type%>%pivot_wider(names_from = "ATP", values_from = "Surface")
+tidytype<- untidytype%>%pivot_longer(cols= c(2:67), names_to = "ATP", values_to = "Surface")%>%na.omit()
+```
+2. Joining/Merging
+```{r}
+tennis<- full_join(tidyfinal, tidytype)
+```
+Since my datasets were already tidy, I had to make them untidy by pivoting wider and then pivoting longer. I joined them by using a full join, however I could have used a different join as my datasets had the same number of rows and did not have any missing values. I didn't drop any cases.
+
+3. Wrangling: Using dplyr statistics
+```{r}
+tennis%>%filter(Surface == "Grass")
+tennis%>%select(Winner, Tournament)
+tennis%>%arrange((Loser))
+tennis%>%group_by(Loser)%>%filter(Surface == "Clay")%>%select(-Winner, -WRank)
+tennis%>%summarize(n_distinct(Surface))
+tennis$WRank <- as.numeric(as.character(tennis$WRank))
+tennis$LRank <- as.numeric(as.character(tennis$LRank))
+tennis$ATP<- as.numeric(as.character(tennis$ATP))
+tennis<- tennis%>%mutate(dif = abs(WRank-LRank))%>%glimpse
+tennis%>%summarize(median(WRank))
+tennis%>%summary()
+```
+I used the filter function to search for the results that are only true when the Surface of the court is Grass. I used the select function to only look at Winners and the tournament name. The arrange function was used to arrange the data by the Loser name. I grouped by Loser and filtered for Surface that was Clay and dropped the Winner name and Winner Rank to focus on the loser stats. I used the summarize function to lok at how many distinct Surfaces there were. I changed my ATP, LRank, and WRank variables to numeric and then was able to create a new variable using mutate to look at the differences in rank between loser and winner.  I used summarize to look at the median rank of the winners.  
+
+3. Wrangling: Using ten summary statistics
+```{r}
+tennis%>%group_by(Loser, Surface)%>%summarize_if(is.numeric, mean)
+tennis%>%summarize(mean(LRank), mean(WRank))
+
+tennis%>%summarize(sd(WRank), sd(LRank))
+
+tennis%>%summarize(max(WRank), max(LRank))
+tennis%>%summarize(min(WRank), min(LRank))
+
+tennis%>%summarize(n_distinct(Winner), n_distinct(Loser))
+
+tennis%>%
+  select(2, 3, 4, 8)%>%correlate()
+```
+I grouped by Loser and Surface type and summarized the numeric variables to find the mean of each loser. I then used the summarize function to look at the overall mean of the winner and loser rank. I also used the summarize function to look at the standard deviation, minimum, and maximum of the ranks for winners and losers. I then took a look at the number of distinct winners and losers in the dataset. Finally, I found a correlation matrix of the numeric variables, including the new one I created earlier.
+
+4. Visualization: Heat map 
+```{r}
+tennis%>%select_if(is.numeric)%>%cor%>%as.data.frame%>%
+rownames_to_column%>%pivot_longer(-1)%>%
+ggplot(aes(rowname,name,fill=value))+geom_tile()+
+geom_text(aes(label=round(value,2)))+
+xlab("")+ylab("")+scale_fill_gradient2(high="pink")  
+```
+
+4. Visualization: Scatterplot
+```{r}
+ggplot(tennis, aes(x=WRank, y=LRank)) + 
+  geom_point(aes(col=Surface)) + 
+  geom_smooth(method="lm", se=F)+
+  labs(title = "Winner Rank VS Loser Rank",
+       x = "Winner Rank",
+       y = "Loser Rank")+scale_y_continuous(breaks = seq(0,150,25))+
+  scale_x_continuous(breaks = seq(0,200,25))+
+  scale_color_manual(values=c("red", "green", "purple"))
+```
+It is apparent that when a scatterplot is made of the two variables Winner Rank (WRank) and Lose Rank (LRank), there is a positive correlation between the two. We can see that most of the winners were ranked below 50, meaning they were higher ranked or better players so to speak. The Losers have a larger distribution with far more points in the 75 - 100 range. A line of best fit is included to show this slightly positive correlation, meaning that as winne rank increases the loser rank is also increased.The colors denote the surface type for the players. It is easy to see that the hard court surface is the most common surface type. 
+
+4. Visualization: Barplot
+```{r}
+toptennis<- tennis%>%filter(WRank < 10)
+  
+  ggplot(toptennis, aes(Winner))+
+  geom_bar(aes(y=WRank), stat="summary", fill = "#FF6666")+ 
+    theme(axis.text.x = element_text(angle=45, hjust=1), 
+        legend.position="right")+facet_wrap(~Surface)+
+    labs(title = "Winners Ranked in the Top 10 and Court Surface",
+         x = "Winner Name",
+         y = "Rank")+
+    scale_y_continuous(breaks = seq(0, 10, 1))
+
+    
+  
+```
+This is a barplot of the winners ranked within the top ten, what their rank is and what surfaces they have won on. We can see that the plyer Nadal only won on the clay surface while Murray won on all three surfaces. Data like this can show which players are most versatile when it comes to court surface. Even though Djokovic was ranked as number 1, this player did not win on the Grass surface, whereas Thiem and Murray were able to. 
+
+5. Dimensionality Reduction
+```{r}
+
+library(cluster)
+Nclust_dat<- tennis%>%select(ATP, LRank, WRank, dif)
+
+sil_width<-vector()
+for(i in 2:10){
+pam_fit <- pam(Nclust_dat, k = i)
+sil_width[i] <- pam_fit$silinfo$avg.width
+}
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name="k",breaks=1:10)
+
+
+pam2<- tennis%>%select(ATP, LRank, WRank, dif)%>%pam(2)
+pam2
+
+final<-tennis%>%mutate(cluster=as.factor(pam2$clustering))
+ggplot(final, aes(x=ATP,y=LRank, color=cluster))+geom_point()+scale_x_continuous(breaks = seq(0, 70, 5))+labs(title = "PAM")
+
+final %>% group_by(cluster) %>% summarize_if(is.numeric,mean,na.rm=T)
+
+
+
+
+```
+First, I created an object that only selected the three numeric variables I wanted to use. Secondly, it was important to find the sillouette width to see how many clusters was preferred. When this was done it was found that two clusters was the optimal number. Then I created another object that had those variables and piped into the pam() function to do PAM analysis on the three numeric variables ATP, LRank, and WRank. The X-axis is ATP and the Y is the Loser Rank with the groupings by cluster. Running the mean for the clusters show that the mean winner rank, loser rank, and difference between the two were all higher than cluster 2. Cluster 2 had the highest ATP ranking however. It appears that the cluster was really separated into high and low player ranking.
+
+
