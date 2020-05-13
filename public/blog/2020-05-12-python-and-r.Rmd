@@ -10,17 +10,17 @@ tags:
 description: ''
 ---
 
-Python and R are able to communicate with each other even though they are two different coding languages. You can use reticulate in order to have R and python chunks communicate. 
+> Python and R are able to communicate with each other even though they're different languages! You can use the **_reticulate_** package in order to have R and python chunks communicate. Let's look at a simple example!
 
-```{r}
+This is a picture of my dog when she was a puppy. Let's say I wanted to use both R and Python to say just how cute she was as a puppy.
 
-```
 ![](/blog/2020-05-12-python-and-r_files/IMG_0974 2.jpg)
 
-First, you must call reticulate using library(). Then you can create an object (I called mine "randomstring") with some character value.
+
+First, you must call install the reticulate package using *install.packages()* and call reticulate using *library()*. Then you can create an object (I called mine "randomstring") with some character value.
 ```{r}
 library(reticulate)
-randomstring <- "This is a picture of"
+randomstring <- "That puppy is so"
 
 
 
@@ -28,10 +28,13 @@ randomstring <- "This is a picture of"
 
 Using a python code chunk, you can actually use the same variable name and things won't get mixed up! So, I created a string to finish the rest of my sentence.
 ```{python}
-randomstring = "my dog, Millie"
+randomstring = "stinkin' cute!"
 
 ```
-Finally, you can print out the output by telling python that you need to use the variable from r and then the variable in python and combine them together to get:
+Finally, you can print out the output by telling Python that you need to use the variable from R and then the variable in Python. Combine them together to get:
 ```{python}
 print(r.randomstring, randomstring)
+
 ```
+> And isn't that the truth!
+

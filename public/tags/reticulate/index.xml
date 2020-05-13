@@ -17,9 +17,8 @@
       <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
       
       <guid>/blog/python-and-r/</guid>
-      <description>Python and R are able to communicate with each other even though they are two different coding languages. You can use reticulate in order to have R and python chunks communicate.
-First, you must call reticulate using library(). Then you can create an object (I called mine “randomstring”) with some character value.
-library(reticulate) randomstring &amp;lt;- &amp;quot;This is a picture of&amp;quot; Using a python code chunk, you can actually use the same variable name and things won’t get mixed up!</description>
+      <description>Python and R are able to communicate with each other even though they’re different languages! You can use the reticulate package in order to have R and python chunks communicate. Let’s look at a simple example!
+ This is a picture of my dog when she was a puppy. Let’s say I wanted to use both R and Python to say just how cute she was as a puppy.</description>
     </item>
     
   </channel>
