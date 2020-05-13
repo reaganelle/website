@@ -1,5 +1,5 @@
 ---
-title: 'Project 1: Exploratory Data Analysis'
+title: "Project 1: Exploratory Data Analysis"
 author: "Elle Reagan epr427"
 date: 'March 6, 2020'
 output:

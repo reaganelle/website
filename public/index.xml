@@ -6,10 +6,19 @@
     <description>Recent content on Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 02 Oct 2016 22:55:05 -0400</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Project 2</title>
+      <link>/project2/</link>
+      <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>#install.packages(&amp;quot;mlbench&amp;quot;) #install.packages(&amp;quot;lmtest&amp;quot;) library(readxl) library(dplyr) library(tidyverse) library(ggplot2) library(lmtest) #install.packages(&amp;quot;sandwich&amp;quot;) library(sandwich) #install.packages(&amp;quot;vegan&amp;quot;) library(vegan) #install.packages(&amp;quot;readxl&amp;quot;) Book4 &amp;lt;- read_excel(&amp;quot;cereal.xlsx&amp;quot;, skip = 1) cer&amp;lt;- Book4 cer1&amp;lt;- cer%&amp;gt;%select(-name) cer1$mfr&amp;lt;-ifelse(cer$mfr== &amp;quot;K&amp;quot;, &amp;quot;K&amp;quot;,&amp;quot;N&amp;quot;) head(cer1) ## # A tibble: 6 x 5 ## mfr calories sodium shelf rating ## &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; ## 1 N 70 130 Top 68.4 ## 2 N 120 15 Top 34.0 ## 3 K 70 260 Top 59.4 ## 4 K 50 140 Top 93.</description>
+    </item>
     
     <item>
       <title>Python and R</title>
@@ -23,33 +32,24 @@ library(reticulate) randomstring &amp;lt;- &amp;quot;This is a picture of&amp;qu
     </item>
     
     <item>
+      <title>Project 1: Exploratory Data Analysis</title>
+      <link>/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project1/</guid>
+      <description>title: &#34;Project 1&#34; The data sets I am using retain information for the ATP, or Association of Tennis Professionals, in the year 2016. The first data set contains the tournament name, court surface, and the tournament number. The second data set gives the names of the winners and losers of the final match, the rankings of both players during the tournament, and the tournament number. The datasets were joined using the tournament number.</description>
+    </item>
+    
+    <item>
       <title>Projects</title>
       <link>/projects/</link>
-      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/projects/</guid>
       <description>Here are some projects I have recently completed:
   Exploratory Data Analysis with Tidyverse Tools
   Modeling, Testing, and Classification
   </description>
-    </item>
-    
-    <item>
-      <title>Project 1: Exploratory Data Analysis</title>
-      <link>/project1/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/project1/</guid>
-      <description>The data sets I am using retain information for the ATP, or Association of Tennis Professionals, in the year 2016. The first data set contains the tournament name, court surface, and the tournament number. The second data set gives the names of the winners and losers of the final match, the rankings of both players during the tournament, and the tournament number. The datasets were joined using the tournament number.</description>
-    </item>
-    
-    <item>
-      <title>Project 2</title>
-      <link>/project2/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/project2/</guid>
-      <description>#install.packages(&amp;quot;mlbench&amp;quot;) #install.packages(&amp;quot;lmtest&amp;quot;) library(readxl) library(dplyr) library(tidyverse) library(ggplot2) library(lmtest) #install.packages(&amp;quot;sandwich&amp;quot;) library(sandwich) #install.packages(&amp;quot;vegan&amp;quot;) library(vegan) #install.packages(&amp;quot;readxl&amp;quot;) Book4 &amp;lt;- read_excel(&amp;quot;cereal.xlsx&amp;quot;, skip = 1) cer&amp;lt;- Book4 cer1&amp;lt;- cer%&amp;gt;%select(-name) cer1$mfr&amp;lt;-ifelse(cer$mfr== &amp;quot;K&amp;quot;, &amp;quot;K&amp;quot;,&amp;quot;N&amp;quot;) head(cer1) ## # A tibble: 6 x 5 ## mfr calories sodium shelf rating ## &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; ## 1 N 70 130 Top 68.4 ## 2 N 120 15 Top 34.0 ## 3 K 70 260 Top 59.4 ## 4 K 50 140 Top 93.</description>
     </item>
     
   </channel>
