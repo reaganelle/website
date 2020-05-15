@@ -7,13 +7,17 @@ date: '2020-05-13'
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+<center>
 Elle P. Reagan
-4532 Lago Viento
-Austin, TX 78734
-(512) 925-4101
-reaganelle@utexas.edu
 
+4532 Lago Viento
+
+Austin, TX 78734
+
+(512) 925-4101
+
+reaganelle@utexas.edu
+<center>
 
 EDUCATION	
 
