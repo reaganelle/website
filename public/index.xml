@@ -48,6 +48,18 @@ iAchieve Tutoring, Tutor Jan 2015 – Current
     </item>
     
     <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>Here are some projects I have recently completed:
+  Exploratory Data Analysis with Tidyverse Tools
+  Modeling, Testing, and Classification
+  </description>
+    </item>
+    
+    <item>
       <title>Python and R</title>
       <link>/blog/python-and-r/</link>
       <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
@@ -55,18 +67,6 @@ iAchieve Tutoring, Tutor Jan 2015 – Current
       <guid>/blog/python-and-r/</guid>
       <description>Python and R are able to communicate with each other even though they’re different languages! You can use the reticulate package in order to have R and python chunks communicate. Let’s look at a simple example!
  This is a picture of my dog when she was a puppy. Let’s say I wanted to use both R and Python to say just how cute she was as a puppy.</description>
-    </item>
-    
-    <item>
-      <title>Projects</title>
-      <link>/projects/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/projects/</guid>
-      <description>Here are some projects I have recently completed:
-  Exploratory Data Analysis with Tidyverse Tools
-  Modeling, Testing, and Classification
-  </description>
     </item>
     
     <item>

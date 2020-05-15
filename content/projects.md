@@ -1,12 +1,7 @@
 ---
-categories:
-- projects
-showpagemeta: false
-tags:
-- projects
-title: Projects
-
-
+title: "Projects"
+output: html_document
+date: 2020-05-12
 ---
 Here are some projects I have recently completed:
 

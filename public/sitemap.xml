@@ -28,6 +28,11 @@
   </url>
   
   <url>
+    <loc>/projects/</loc>
+    <lastmod>2020-05-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/tags/python/</loc>
     <lastmod>2020-05-12T00:00:00+00:00</lastmod>
   </url>
@@ -49,18 +54,6 @@
   
   <url>
     <loc>/categories/</loc>
-  </url>
-  
-  <url>
-    <loc>/projects/</loc>
-  </url>
-  
-  <url>
-    <loc>/tags/projects/</loc>
-  </url>
-  
-  <url>
-    <loc>/categories/projects/</loc>
   </url>
   
   <url>
