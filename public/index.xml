@@ -6,10 +6,25 @@
     <description>Recent content on Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 12 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 13 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Wed, 13 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>Elle P. Reagan 4532 Lago Viento Austin, TX 78734 (512) 925-4101 reaganelle@utexas.edu
+EDUCATION
+ University of Texas at Austin Aug 2016 – May 2020 Bachelor of Science and Arts in Biology Minor in Sociology with a Pre-Health certificate
+ EMPLOYMENT
+iAchieve Tutoring, Tutor Jan 2015 – Current
+ •Provides help and tutoring services for multiple students in all areas of school
+ Vector Marketing, Social Media Surveyor May 2018 – Sept 2018</description>
+    </item>
     
     <item>
       <title>Project 1</title>
@@ -49,6 +64,20 @@
   Exploratory Data Analysis with Tidyverse Tools
   Modeling, Testing, and Classification
   </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/untitled/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/untitled/</guid>
+      <description>Elle P. Reagan 4532 Lago Viento | Austin, TX 78734 | (512) 925-4101 | reaganelle@utexas.edu
+EDUCATION
+University of Texas at Austin Aug 2016 – May 2020 Bachelor of Science and Arts in Biology Minor in Sociology with a Pre-Health certificate
+EMPLOYMENT
+iAchieve Tutoring, Tutor Jan 2015 – Current • Provides help and tutoring services for multiple students in all areas of school
+Vector Marketing, Social Media Surveyor May 2018 – Sept 2018 • Used social media platforms to find influencers to promote Vector Marketing with respect to recruitment</description>
     </item>
     
   </channel>
