@@ -7,8 +7,8 @@ date: '2020-05-13'
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-<center>
-Elle P. Reagan
+
+**Elle P. Reagan**
 
 4532 Lago Viento
 
@@ -17,16 +17,17 @@ Austin, TX 78734
 (512) 925-4101
 
 reaganelle@utexas.edu
-<center>
 
-EDUCATION	
+
+**EDUCATION**	
+
 
 > University of Texas at Austin                                      *Aug 2016 – May 2020*
 > Bachelor of Science and Arts in Biology
 > Minor in Sociology with a Pre-Health certificate
 
 
-EMPLOYMENT
+**EMPLOYMENT**
 
 iAchieve Tutoring, Tutor    *Jan 2015 – Current*
 
@@ -44,7 +45,7 @@ Vector Marketing, Office Assistant                                   *Jun 2014 �
 
 > •	Assisted with the contact and sign-up for multiple meetings and banquets
 
-LEADERSHIP	
+**LEADERSHIP**	
 Texas Royals, Copywriter Chair
 
 > •	Creates and edits blog posts for Texas Royals and works closely with public relations
@@ -65,7 +66,7 @@ Texas Royals, Recruitment Committee
 > •	Attended recruitment events and evaluated applications for prospective new members
 
 
-VOLUNTEER EXPERIENCE	
+**VOLUNTEER EXPERIENCE**	
 Achieve Manual Physical Therapy, Shadow Position
 
 > •	Cleaned and maintained facility 
